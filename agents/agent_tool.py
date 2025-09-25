@@ -10,8 +10,8 @@ from langchain_core.runnables import RunnableLambda
 from langchain import hub
 from langchain_core.output_parsers.pydantic import PydanticOutputParser
 from langchain_core.tools import tool
-from prompt import CRYPTO_ANALYSIS_PROMPT
-from schemas import AgentResponse, CryptoData
+from prompts.prompt import CRYPTO_ANALYSIS_PROMPT
+from schemas.schemas import AgentResponse, CryptoData
 from dotenv import load_dotenv
 from langchain_core.prompts import PromptTemplate
 

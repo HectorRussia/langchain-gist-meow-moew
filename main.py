@@ -5,8 +5,8 @@ from langchain_core.output_parsers.pydantic import PydanticOutputParser
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnableLambda
 from langchain_openai import AzureChatOpenAI
-from prompt import REACT_PROMPT_WITH_FORMAT_INSTRUCTIONS
-from schemas import AgentResponseMain
+from prompts.prompt import REACT_PROMPT_WITH_FORMAT_INSTRUCTIONS
+from schemas.schemas import AgentResponseMain
 from dotenv import load_dotenv
 
 from read_url_content import tools
