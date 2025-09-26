@@ -10,6 +10,9 @@ from langchain_core.runnables import RunnableLambda
 from langchain import hub
 from langchain_core.output_parsers.pydantic import PydanticOutputParser
 from langchain_core.tools import tool
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from prompts.prompt import CRYPTO_ANALYSIS_PROMPT
 from schemas.schemas import AgentResponse, CryptoData
 from dotenv import load_dotenv
