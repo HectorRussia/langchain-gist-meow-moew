@@ -9,7 +9,7 @@ from prompts.prompt import REACT_PROMPT_WITH_FORMAT_INSTRUCTIONS
 from schemas.schemas import AgentResponseMain
 from dotenv import load_dotenv
 
-from read_url_content import tools
+from Build_agent_cypto.read_url_content import tools
 
 load_dotenv()
 
