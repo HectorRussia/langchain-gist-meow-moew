@@ -1,0 +1,94 @@
+QANode ทำหน้าที่อะไรจริง ๆ (สรุปสั้นแต่ลึก)
+
+QANode = จุดเดียวที่ “อนุญาตให้ LLM พูด”
+
+ทุก node ก่อนหน้า:
+
+เตรียมข้อมูล
+
+คุมขอบเขต
+
+ตัดสินว่า ควร ให้ LLM ทำงานไหม
+
+QANode:
+
+ไม่ตัดสิน relevance
+
+ไม่ validate input
+
+แค่ “ตอบตามข้อมูลที่ได้รับ”
+
+นี่คือ design ที่ถูกต้องมากสำหรับ AI ที่ควบคุมได้
+
+
+QANode → END
+
+(ในภาพเขียนเป็น “final edge” ไป END)
+แนวคิดคือ:
+
+หลังตอบเสร็จ ให้ workflow “จบ” ทันที
+
+ไม่ loop ไม่กลับไปแก้
+
+ถ้าอยากให้ถามใหม่/วนแก้คำถามได้ทีหลัง ค่อยเพิ่ม cycle ทีหลังได้ (นี่คือจุดแข็ง LangGraph)
+
+START
+  ↓
+InputNode
+  ↓
+ContextNode
+  ↓
+QANode
+  ↓
+END
+
+
+**state เป็น Python unpacking operator ที่ใช้เพื่อ "กระจาย" dictionary
+**state = "เอาของเก่า + ใส่ของใหม่"
+
+# ❌ ผิด - ขาดข้อมูล
+return {"valid": True}  # ขาด question, context, answer, error
+
+# ✅ ถูก - ครบทุก fields
+return {**state, "valid": True}  # เก็บข้อมูลเดิม + เพิ่ม valid
+
+# สมมุติ state ตอนนี้มี:
+state = {"question": "What is LangGraph?", "context": None, "answer": None}
+
+# ถ้าไม่ใช้ **state
+return {"valid": True}  # ⚠️ ข้อมูลเดิมหายไปหมด!
+
+# ใช้ **state 
+return {**state, "valid": True}  # ✅ รักษาข้อมูลเดิม + เพิ่ม valid
+# ได้: {"question": "What is LangGraph?", "context": None, "answer": None, "valid": True}
+
+
+state = {"question": "Hello", "context": None}
+
+# **state คือการ "แตก" dictionary ออกมา
+{**state, "valid": True}
+
+# เท่ากับ
+{"question": "Hello", "context": None, "valid": True}
+
+state = {"question": "Hello", "context": None}
+
+# **state คือการ "แตก" dictionary ออกมา
+{**state, "valid": True}
+
+# เท่ากับ
+{"question": "Hello", "context": None, "valid": True}
+
+LangGraph Context:
+LangGraph ต้องการ state object ที่สมบูรณ์ เพื่อส่งต่อให้ node ถัดไป
+
+Input: {"question": "What is LangGraph?"}
+Node ประมวลผล: เพิ่ม/แก้ไขข้อมูล
+Output: {"question": "What is LangGraph?", "valid": True} ← ต้องมีข้อมูลเดิมด้วย
+
+
+def input_validation(state: QAState) -> QAState:
+    return {"valid": True}  # ข้อมูลอื่นหายหมด!
+
+def input_validation(state: QAState) -> QAState:
+    return {**state, "valid": True}  # รักษาข้อมูลเดิม + เพิ่มใหม่
